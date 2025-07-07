@@ -1,0 +1,70 @@
+{
+  "name": "relojAdonis",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node bin/server.js",
+    "build": "node ace build",
+    "dev": "npx ts-node-maintained --loader ts-node-maintained/esm bin/server.ts",
+    "test": "ts-node-maintained --loader ts-node-maintained/esm bin/test.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "imports": {
+    "#controllers/*": "./app/controllers/*.ts",
+    "#exceptions/*": "./app/exceptions/*.ts",
+    "#models/*": "./app/models/*.ts",
+    "#mails/*": "./app/mails/*.ts",
+    "#services/*": "./app/services/*.ts",
+    "#listeners/*": "./app/listeners/*.ts",
+    "#events/*": "./app/events/*.ts",
+    "#middleware/*": "./app/middleware/*.ts",
+    "#validators/*": "./app/validators/*.ts",
+    "#providers/*": "./providers/*.ts",
+    "#policies/*": "./app/policies/*.ts",
+    "#abilities/*": "./app/abilities/*.ts",
+    "#database/*": "./database/*.ts",
+    "#start/*": "./start/*.ts",
+    "#tests/*": "./tests/*.ts",
+    "#config/*": "./config/*.ts"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.8.2",
+    "@adonisjs/eslint-config": "^2.0.0",
+    "@adonisjs/prettier-config": "^1.4.4",
+    "@adonisjs/tsconfig": "^1.4.0",
+    "@japa/api-client": "^3.1.0",
+    "@japa/assert": "^4.0.1",
+    "@japa/plugin-adonisjs": "^4.0.0",
+    "@japa/runner": "^4.2.0",
+    "@swc/core": "1.11.24",
+    "@types/luxon": "^3.6.2",
+    "@types/node": "^22.15.18",
+    "eslint": "^9.26.0",
+    "hot-hook": "^0.4.0",
+    "pino-pretty": "^13.0.0",
+    "prettier": "^3.5.3",
+    "ts-node-maintained": "^10.9.5",
+    "typescript": "~5.8"
+  },
+  "dependencies": {
+    "@adonisjs/auth": "^9.4.0",
+    "@adonisjs/core": "^6.18.0",
+    "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/lucid": "^21.6.1",
+    "@vinejs/vine": "^3.0.1",
+    "luxon": "^3.6.1",
+    "mysql2": "^3.14.1",
+    "reflect-metadata": "^0.2.2"
+  },
+  "hotHook": {
+    "boundaries": [
+      "./app/controllers/**/*.ts",
+      "./app/middleware/*.ts"
+    ]
+  },
+  "prettier": "@adonisjs/prettier-config"
+}
