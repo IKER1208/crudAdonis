@@ -8,9 +8,6 @@
 */
 
 import router from '@adonisjs/core/services/router'
-import AuthController from '#controllers/auth_controller'
-import PersonController from '#controllers/person_controller'
-import ReportController from '#controllers/report_controller'
 import { middleware } from './kernel.js'
 
 router.get('/', async () => {
@@ -19,34 +16,24 @@ router.get('/', async () => {
   }
 })
 
-// Auth
-router.post('/register', [AuthController, 'register'])
-router.post('/login', [AuthController, 'login'])
+// auth
+router.group(() => {
+  router.post('/register', '#controllers/auth_controller.register')
+  router.post('/login', '#controllers/auth_controller.login')
+})
 
-// CRUD personas (protegido)
-router
-  .get('/persons', [PersonController, 'index'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .post('/persons', [PersonController, 'store'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .get('/persons/:id', [PersonController, 'show'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .put('/persons/:id', [PersonController, 'update'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .delete('/persons/:id', [PersonController, 'destroy'])
-  .use(middleware.auth({ guards: ['api'] }))
+// personas
+router.group(() => {
+  router.get('/persons', '#controllers/person_controller.index')
+  router.post('/persons', '#controllers/person_controller.store')
+  router.get('/persons/:id', '#controllers/person_controller.show')
+  router.put('/persons/:id', '#controllers/person_controller.update')
+  router.delete('/persons/:id', '#controllers/person_controller.destroy')
+}).use([middleware.auth({ guards: ['api'] })])
 
-// Reportes (protegido)
-router
-  .get('/reports/gender', [ReportController, 'gender'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .get('/reports/age', [ReportController, 'age'])
-  .use(middleware.auth({ guards: ['api'] }))
-router
-  .get('/reports/gender-age', [ReportController, 'genderAge'])
-  .use(middleware.auth({ guards: ['api'] }))
+//reportes
+router.group(() => {
+  router.get('/reports/gender', '#controllers/report_controller.gender')
+  router.get('/reports/age', '#controllers/report_controller.age')
+  router.get('/reports/gender-age', '#controllers/report_controller.genderAge')
+}).use([middleware.auth({ guards: ['api'] })])
