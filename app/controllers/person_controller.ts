@@ -28,9 +28,10 @@ export default class PersonController {
       const person = await Person.create({ ...data, sexo: data.sexo as 'M' | 'F' })
       // Registrar log
       await Log.create({
-        usuario: auth.user?.fullName|| 'desconocido',
+        usuario: auth.user?.email || 'desconocido',
         operacion: 'crear',
-        id: person.id.toString(),
+        sobre: person.id.toString(),
+        nombrePersona: person.nombre
       })
       return response.created(person)
     } catch (error) {
@@ -66,9 +67,10 @@ export default class PersonController {
       await person.save()
       // Registrar log
       await Log.create({
-        usuario: auth.user?.email|| 'desconocido',
+        usuario: auth.user?.email || 'desconocido',
         operacion: 'actualizar',
-        id: person.id.toString(),
+        sobre: person.id.toString(),
+        nombrePersona: person.nombre
       })
       return response.ok(person)
     } catch (error) {
@@ -84,7 +86,8 @@ export default class PersonController {
     await Log.create({
       usuario: auth.user?.email || 'desconocido',
       operacion: 'eliminar',
-      id: person.id.toString(),
+      sobre: person.id.toString(),
+      nombrePersona: person.nombre
     })
     return response.noContent()
   }

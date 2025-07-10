@@ -4,13 +4,15 @@ export interface ILog extends Document {
   usuario: string;
   operacion: string;
   sobre: string;
+  nombrePersona: string;
   fecha?: Date;
 }
 
 const logSchema: Schema<ILog> = new Schema({
   usuario: { type: String, required: true },
   operacion: { type: String, required: true },
-  id: { type: String, required: true },
+  sobre: { type: String, required: true },
+  nombrePersona: { type: String, required: true },
   fecha: { type: Date, default: Date.now },
 });
 
