@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Person from '#models/person'
 import { DateTime } from 'luxon'
+import vine from '@vinejs/vine'
 
 export default class PersonController {
   async index({ response }: HttpContext) {
@@ -9,19 +10,25 @@ export default class PersonController {
   }
 
   async store({ request, response }: HttpContext) {
-    const data = request.only(['nombre', 'edad', 'sexo'])
-    // Validación básica
-    if (!data.nombre || typeof data.nombre !== 'string' || data.nombre.length > 50) {
-      return response.badRequest({ message: 'Nombre inválido' })
+    const personSchema = vine.object({
+      nombre: vine.string()
+        .minLength(1)
+        .maxLength(50)
+        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/), // Solo letras y espacios
+      edad: vine.number().min(0).max(120),
+      sexo: vine.string().regex(/^[MF]$/), // Solo 'M' o 'F'
+    })
+    try {
+      const data = await vine.validate({
+        schema: personSchema,
+        data: request.only(['nombre', 'edad', 'sexo']),
+      })
+      // Conversión explícita para el tipo 'sexo'
+      const person = await Person.create({ ...data, sexo: data.sexo as 'M' | 'F' })
+      return response.created(person)
+    } catch (error) {
+      return response.badRequest({ errors: error.messages || error.message })
     }
-    if (typeof data.edad !== 'number' || data.edad < 0 || data.edad > 120) {
-      return response.badRequest({ message: 'Edad inválida' })
-    }
-    if (!['M', 'F'].includes(data.sexo)) {
-      return response.badRequest({ message: 'Sexo inválido' })
-    }
-    const person = await Person.create(data)
-    return response.created(person)
   }
 
   async show({ params, response }: HttpContext) {
@@ -34,21 +41,26 @@ export default class PersonController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    const data = request.only(['nombre', 'edad', 'sexo'])
-    // Validación básica
-    if (!data.nombre || typeof data.nombre !== 'string' || data.nombre.length > 50) {
-      return response.badRequest({ message: 'Nombre inválido' })
+    const personSchema = vine.object({
+      nombre: vine.string()
+        .minLength(1)
+        .maxLength(50)
+        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/), // Solo letras y espacios
+      edad: vine.number().min(0).max(120),
+      sexo: vine.string().regex(/^[MF]$/), // Solo 'M' o 'F'
+    })
+    try {
+      const data = await vine.validate({
+        schema: personSchema,
+        data: request.only(['nombre', 'edad', 'sexo']),
+      })
+      const person = await Person.query().where('id', params.id).whereNull('deleted_at').firstOrFail()
+      person.merge({ ...data, sexo: data.sexo as 'M' | 'F' })
+      await person.save()
+      return response.ok(person)
+    } catch (error) {
+      return response.badRequest({ errors: error.messages || error.message })
     }
-    if (typeof data.edad !== 'number' || data.edad < 0 || data.edad > 120) {
-      return response.badRequest({ message: 'Edad inválida' })
-    }
-    if (!['M', 'F'].includes(data.sexo)) {
-      return response.badRequest({ message: 'Sexo inválido' })
-    }
-    const person = await Person.query().where('id', params.id).whereNull('deleted_at').firstOrFail()
-    person.merge(data)
-    await person.save()
-    return response.ok(person)
   }
 
   async destroy({ params, response }: HttpContext) {
