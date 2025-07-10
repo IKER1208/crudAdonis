@@ -66,7 +66,7 @@ export default class PersonController {
       await person.save()
       // Registrar log
       await Log.create({
-        usuario: auth.user?.fullName || 'desconocido',
+        usuario: auth.user?.email|| 'desconocido',
         operacion: 'actualizar',
         id: person.id.toString(),
       })
@@ -82,7 +82,7 @@ export default class PersonController {
     await person.save()
     // Registrar log
     await Log.create({
-      usuario: auth.user?.fullName || 'desconocido',
+      usuario: auth.user?.email || 'desconocido',
       operacion: 'eliminar',
       id: person.id.toString(),
     })
