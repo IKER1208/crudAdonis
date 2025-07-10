@@ -37,3 +37,8 @@ router.group(() => {
   router.get('/reports/age', '#controllers/report_controller.age')
   router.get('/reports/gender-age', '#controllers/report_controller.genderAge')
 }).use([middleware.auth({ guards: ['api'] })])
+
+// auditorias
+router.group(() => {
+  router.get('/auditorias', '#controllers/audit_controller.index')
+}).use([middleware.auth({ guards: ['api'] })])
